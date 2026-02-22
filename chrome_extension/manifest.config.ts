@@ -13,10 +13,6 @@ export default defineManifest({
     'contentSettings',
     "nativeMessaging"
   ],
-  background:{
-    service_worker: 'src/content/background.tsx',
-    type: "module"
-  },
   content_scripts: [{
     js: ['src/content/main.tsx'],
     matches: ['https://www.linkedin.com/jobs/*'],
