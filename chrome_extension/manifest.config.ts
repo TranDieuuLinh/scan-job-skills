@@ -11,7 +11,8 @@ export default defineManifest({
   permissions: [
     'sidePanel',
     'contentSettings',
-    "nativeMessaging"
+    "nativeMessaging",
+    "storage"
   ],
   content_scripts: [{
     js: ['src/content/main.tsx'],

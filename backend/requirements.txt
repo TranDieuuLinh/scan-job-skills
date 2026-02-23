@@ -3,6 +3,7 @@ annotated-types==0.7.0
 anyio==4.12.1
 click==8.3.1
 fastapi==0.129.0
+flashtext==2.7
 h11==0.16.0
 idna==3.11
 psycopg2-binary==2.9.11

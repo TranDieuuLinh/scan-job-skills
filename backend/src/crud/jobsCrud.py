@@ -19,5 +19,4 @@ def get_job_by_idKeyword(db: Session, id: str, keyword: str):
     return db.scalars(stmt).first()
 
 
-def get_all_jobs(db: Session):
-    return db.query(Job).all()
+

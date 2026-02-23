@@ -1,5 +1,5 @@
 from .db import Base
-from sqlalchemy import Column, String, DateTime, UniqueConstraint
+from sqlalchemy import Column, String, DateTime
 
 
 class Job(Base):
