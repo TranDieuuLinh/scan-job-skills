@@ -8,12 +8,14 @@ interface Skill {
 const App = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [keyword, setKeyword] = useState<string | null>(null);
+  const [activeValue, setActiveValue] = useState<string | null>(null);
 
   useEffect(() => {
     const updateUI = async (val: string) => {
       setKeyword(val);
       const response = await getSkills(val);
       if (response) setSkills(response);
+      setActiveValue(response[0].skill_title);
     };
 
     (async () => {
@@ -43,25 +45,36 @@ const App = () => {
   };
 
   return (
-    <div className="px-7 py-4 text-sm bg-white">
-      <div className="mb-4">
+    <div className="py-5 px-8 text-sm bg-white w-full">
+      <div className="mb-3">
         <h2 className="text-lg font-bold text-center text-blue-600">
           {keyword ? keyword.toUpperCase() : "NO KEYWORD"}
         </h2>
       </div>
-      <p className="text-xs pb-3 font-extrabold">Required Skills</p>
-      <div className="h-45 overflow-y-auto space-y-2 relative">
+      <p className="text-sm py-2  font-extrabold">Required Skills</p>
+
+      <div className="h-45  overflow-y-auto space-y-2 relative ">
         {skills.length > 0 ? (
-          skills.map((p, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between rounded-lg border px-3 py-2 hover:shadow-sm transition"
+          skills.map((p) => (
+            <button
+              onClick={() => setActiveValue(p.skill_title)}
+              className={`flex items-center justify-between rounded border px-3 w-full py-2 transition-all ${
+                activeValue === p.skill_title
+                  ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500"
+                  : "border-gray-200 hover:bg-gray-50"
+              }`}
             >
               <span className="font-medium text-gray-700">{p.skill_title}</span>
-              <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full font-bold">
+              <span
+                className={`text-xs px-2 py-1 rounded-full font-bold ${
+                  activeValue === p.skill_title
+                    ? "bg-blue-600 text-white"
+                    : "bg-blue-50 text-blue-700"
+                }`}
+              >
                 {p.count} jobs
               </span>
-            </div>
+            </button>
           ))
         ) : (
           <p className="text-center text-gray-400 mt-10">
@@ -72,6 +85,10 @@ const App = () => {
             </div>
           </p>
         )}
+      </div>
+      <p className="text-sm pt-8 pb-1  font-extrabold">Matching Jobs</p>
+      <div className="h-45  overflow-y-auto space-y-2 relative">
+        {activeValue?.toLowerCase()} {keyword}
       </div>
     </div>
   );
