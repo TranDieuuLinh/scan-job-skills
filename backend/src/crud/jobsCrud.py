@@ -18,5 +18,8 @@ def get_job_by_idKeyword(db: Session, id: str, keyword: str):
     ).limit(1)
     return db.scalars(stmt).first()
 
+def get_all_jobs(db:Session):
+    stmt = select(Job)
+    return db.execute(stmt).scalars().all()
 
 

@@ -11,8 +11,8 @@ for skill, syn in skill_keywords.items():
 
 
 def get_descr_by_keyword(keyword: str, db: Session):
-    stmt = select(Job.job_description).where(Job.keyword == keyword.lower())
-    return db.execute(stmt).scalars().all()
+    stmt = select(Job.job_description, Job.job_id).where(Job.keyword == keyword.lower())
+    return db.execute(stmt).all()
 
 
 def find_skills_by_desc(job_descr: str):

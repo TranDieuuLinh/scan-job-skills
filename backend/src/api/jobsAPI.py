@@ -19,3 +19,9 @@ def add_jobs(job: JobCreate, db: Session = Depends(get_db)):
         return {"message": f"Already exist for job id {existing.job_id}"}
     new_job = jobsCrud.create_jobs(job, db)
     return {"message": "Job added", "job_id": new_job.job_id}
+
+
+@router.get("/jobs")
+def get_all_jobs(db:Session=Depends(get_db)):
+    test =  jobsCrud.get_all_jobs(db)
+    return test
