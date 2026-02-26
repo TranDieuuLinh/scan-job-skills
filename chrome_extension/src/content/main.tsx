@@ -4,26 +4,36 @@ const duplicateIdUrl = new Set<string>();
 async function scanJobs(): Promise<void> {
   console.log("scanning...");
   for (let i = 0; i < 10; i++) {
+    // 1. Core Identifiers
     const jobTitleLink = document.querySelector<HTMLAnchorElement>(
       'a[href*="/jobs/view/"]'
     );
     const companyName = document
       .querySelector('a[href*="/company/"]')
       ?.textContent?.trim();
-    const meta = document.querySelectorAll("span._05c6eb4c");
     const jobDescr = document.querySelector(
-      'span[data-testid="expandable-text-box"]'
+      '[data-testid="expandable-text-box"]'
     );
     const keyword =
       document
         .querySelector<HTMLInputElement>('[componentkey="semanticSearchBox"]')
         ?.value.trim() || "unknown";
 
+    const metaRow = Array.from(document.querySelectorAll("p")).find((p) => {
+      const dots = (p.textContent?.match(/·/g) || []).length;
+      return dots >= 2;
+    });
+
+    const metaParts =
+      metaRow?.textContent?.split("·").map((s) => s.trim()) || [];
+    const location = metaParts[0];
+    const dateText = metaParts[1];
+
+
     const jobName = jobTitleLink?.textContent?.trim();
     const jobUrl = jobTitleLink?.href;
     const jobId = jobUrl?.match(/\/view\/(\d+)/)?.[1];
     const cleanDesc = jobDescr?.textContent?.replace(/\s+/g, " ").trim();
-    const location = meta[0]?.textContent?.trim();
 
     if (companyName && jobName && jobId && cleanDesc && location) {
       const key = `${keyword}__${jobId}`;
@@ -39,7 +49,7 @@ async function scanJobs(): Promise<void> {
             cleanDesc,
             location,
             keyword,
-            date: meta[1]?.textContent,
+            date: dateText,
           }),
           chrome.storage.local.set({ input: keyword, lastUpdated: Date.now() }),
           updateBackend(`${import.meta.env.VITE_BACKEND}skills`, { keyword }),
