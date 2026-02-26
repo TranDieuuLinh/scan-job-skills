@@ -1,6 +1,6 @@
 
-from models.skills import Skills
-from models.job import Job
+from src.models.skills import Skills
+from src.models.job import Job
 from sqlalchemy.orm import Session
 from sqlalchemy import select,  and_, func, desc
 

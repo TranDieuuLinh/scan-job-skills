@@ -1,9 +1,9 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from models.db import Base, engine
-from api.jobsAPI import router as jobs_router
-from api.skillsAPI import router as skills_router
+from src.models.db import Base, engine
+from src.api.jobsAPI import router as jobs_router
+from src.api.skillsAPI import router as skills_router
 from fastapi.middleware.cors import CORSMiddleware
 
 

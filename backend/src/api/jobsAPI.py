@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from models.db import get_db
-from schemas.jobschemas import JobCreate
-from crud import jobsCrud
-from utils.job_services import syn_keyword_search
-from utils.job_titles_list import job_titles
+from src.models.db import get_db
+from src.schemas.jobschemas import JobCreate
+from src.crud import jobsCrud
+from src.utils.job_services import syn_keyword_search
+from src.utils.job_titles_list import job_titles
 
 router = APIRouter()
 

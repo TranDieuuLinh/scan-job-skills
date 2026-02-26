@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from utils.skill_dict_list import skill_keywords
-from models.job import Job
+from src.utils.skill_dict_list import skill_keywords
+from src.models.job import Job
 from flashtext import KeywordProcessor
 
 kp = KeywordProcessor(case_sensitive=False)

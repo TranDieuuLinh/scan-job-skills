@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from models.db import get_db
-from collections import Counter
-from utils import skill_services
-from crud.skillsCrud import add_skills_to_db, check_skills_exist, get_skills_from_db, get_job_match_from_db, get_skills_graph_from_db
-from utils.job_services import syn_keyword_search
-from utils.job_titles_list import job_titles
+from src.models.db import get_db
+from src.utils import skill_services
+from src.crud.skillsCrud import add_skills_to_db, check_skills_exist, get_skills_from_db, get_job_match_from_db, get_skills_graph_from_db
+from src.utils.job_services import syn_keyword_search
+from src.utils.job_titles_list import job_titles
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 
