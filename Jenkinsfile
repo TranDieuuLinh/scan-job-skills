@@ -23,7 +23,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'b5057049-8fed-4547-85d6-3b5cd44c66b8',
+                    credentialsId: 'github-creds-jobscan',
                     usernameVariable: 'GIT_USERNAME',
                     passwordVariable: 'GIT_PASSWORD'
                 )]) {
