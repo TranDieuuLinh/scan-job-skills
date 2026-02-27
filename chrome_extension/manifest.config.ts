@@ -27,6 +27,6 @@ export default defineManifest({
   },
   host_permissions: [
     "http://127.0.0.1:8000/*",
-    "http://157.180.113.69:3002/*"
+    "https://api.travelknowled.ge/*"
   ]
 })
