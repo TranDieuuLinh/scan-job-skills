@@ -19,21 +19,24 @@ const App = () => {
   useEffect(() => {
     const updateUI = async (val: string) => {
       setKeyword(val);
+
       const skillsData = await fetchSkills(val);
-      if (skillsData.length === 0) {
-        setJobs([]);
-        setTrends([]);
-      }
       setSkills(skillsData);
 
-      if (skillsData.length > 0) {
-        console.log("hello");
+      if (skillsData && skillsData.length > 0) {
         const firstSkill = skillsData[0].skill_title;
         setActiveValue(firstSkill);
-        const jobsData = await fetchJobsMatch(firstSkill.toLowerCase(), val);
+
+        const [jobsData, trendData] = await Promise.all([
+          fetchJobsMatch(firstSkill.toLowerCase(), val),
+          fetchSkillsTrend(firstSkill.toLowerCase(), val),
+        ]);
+
         setJobs(jobsData);
-        const trendData = await fetchSkillsTrend(firstSkill.toLowerCase(), val);
         setTrends(trendData);
+      } else {
+        setJobs([]);
+        setTrends([]);
       }
     };
 
@@ -50,12 +53,12 @@ const App = () => {
 
   const handleSkillClick = async (skill: string) => {
     setActiveValue(skill);
-    const result = await fetchJobsMatch(skill.toLowerCase(), keyword || "");
-    setJobs(result);
-    const trendData = await fetchSkillsTrend(
-      skill.toLowerCase(),
-      keyword || ""
-    );
+
+    const [resultData, trendData] = await Promise.all([
+      fetchJobsMatch(skill.toLowerCase(), keyword || ""),
+      fetchSkillsTrend(skill.toLowerCase(), keyword || ""),
+    ]);
+    setJobs(resultData);
     setTrends(trendData);
   };
 

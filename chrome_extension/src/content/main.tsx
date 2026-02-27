@@ -1,10 +1,7 @@
-import * as chrono from "chrono-node";
 const duplicateIdUrl = new Set<string>();
 
 async function scanJobs(): Promise<void> {
-  console.log("scanning...");
   for (let i = 0; i < 10; i++) {
-    // 1. Core Identifiers
     const jobTitleLink = document.querySelector<HTMLAnchorElement>(
       'a[href*="/jobs/view/"]'
     );
@@ -29,7 +26,6 @@ async function scanJobs(): Promise<void> {
     const location = metaParts[0];
     const dateText = metaParts[1];
 
-
     const jobName = jobTitleLink?.textContent?.trim();
     const jobUrl = jobTitleLink?.href;
     const jobId = jobUrl?.match(/\/view\/(\d+)/)?.[1];
@@ -51,8 +47,6 @@ async function scanJobs(): Promise<void> {
             keyword,
             date: dateText,
           }),
-          chrome.storage.local.set({ input: keyword, lastUpdated: Date.now() }),
-          updateBackend(`${import.meta.env.VITE_BACKEND}skills`, { keyword }),
         ]);
         return;
       }
@@ -61,39 +55,15 @@ async function scanJobs(): Promise<void> {
   }
 }
 
-async function updateBackend(url: string, body: object) {
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) console.error(`Failed: ${url}`);
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-async function saveJobsDB(data: any) {
-  const {
-    jobId,
-    companyName,
-    jobName,
-    jobUrl,
-    cleanDesc,
-    location,
-    keyword,
-    date,
-  } = data;
-  await updateBackend(`${import.meta.env.VITE_BACKEND}jobs`, {
-    job_id: jobId,
-    job_title: jobName,
-    job_description: cleanDesc,
-    job_location: location,
-    job_company: companyName,
-    job_published_date: date ? chrono.parseDate(date) : null,
-    job_url: jobUrl,
-    keyword,
+async function saveJobsDB(job: any) {
+  chrome.runtime.sendMessage({ type: "SAVE_JOB", job });
+  chrome.runtime.sendMessage({
+    type: "UPDATE_KEYWORD",
+    keyword: job.keyword,
+  });
+  chrome.runtime.sendMessage({
+    type: "UPDATE_SKILLS",
+    keyword: job.keyword,
   });
 }
 
