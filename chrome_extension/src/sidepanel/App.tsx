@@ -8,7 +8,6 @@ import {
 import { JobCard } from "./components/jobcard";
 import SkillCharts from "./components/charts";
 import { HiMiniInformationCircle } from "react-icons/hi2";
-import { load } from "cheerio";
 
 const App = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -71,13 +70,12 @@ const App = () => {
   };
 
   return (
-    <div className="p-4 text-sm bg-white w-full max-w-md mx-auto min-h-[400px]">
-      <h2 className="text-lg font-bold text-center text-blue-600 mb-4">
+    <div className="px-6 pt-3 text-sm bg-white w-full max-w-md mx-auto h-full">
+      <h2 className="text-lg font-bold text-center text-blue-600 mb-3">
         {keyword?.toUpperCase() || "ANALYZING JOB"}
       </h2>
 
       {loading ? (
-        /* --- GLOBAL LOADING STATE --- */
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600 mb-4"></div>
           <p className="text-gray-600 font-medium">
@@ -88,11 +86,10 @@ const App = () => {
           </p>
         </div>
       ) : (
-        /* --- MAIN CONTENT (Only shows when isLoading is false) --- */
         <>
           <section>
             <p className="font-extrabold mb-2 text-gray-800">Required Skills</p>
-            <div className="h-32 overflow-y-auto space-y-2">
+            <div className="h-29 overflow-y-auto space-y-2">
               {skills.length > 0 ? (
                 skills.map((s, i) => (
                   <button
@@ -135,7 +132,7 @@ const App = () => {
 
           {trend.length > 0 && (
             <section className="mt-6">
-              <p className="font-extrabold mb-2 text-gray-800">Demand Trend</p>
+              <p className="font-extrabold mb-2 text-gray-800">Skill Trend</p>
               <div className="bg-white rounded-lg h-64 p-2">
                 <SkillCharts skillTrend={trend} />
               </div>

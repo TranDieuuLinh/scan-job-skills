@@ -1,7 +1,7 @@
 import * as chrono from "chrono-node";
 
 const URL = import.meta.env.VITE_BACKEND;
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   (async () => {
     try {
       switch (msg.type) {
