@@ -10,8 +10,6 @@ export default defineManifest({
   },
   permissions: [
     'sidePanel',
-    'contentSettings',
-    "nativeMessaging",
     "storage"
   ],
   background: {
@@ -26,7 +24,6 @@ export default defineManifest({
     default_path: 'src/sidepanel/index.html',
   },
   host_permissions: [
-    "http://127.0.0.1:8000/*",
     "https://api.travelknowled.ge/*"
   ]
 })
