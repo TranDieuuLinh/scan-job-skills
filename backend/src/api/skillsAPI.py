@@ -59,5 +59,5 @@ def get_skills_trend(keyword: str, skill_title: str, db: Session = Depends(get_d
             dic.setdefault(l["date"], {"date": l["date"]})
             dic[l["date"]][l["skill_title"]] = l["count"]
     sorted_results = sorted(
-        dic.values(), key=lambda x: x["date"], reverse=True)
+        dic.values(), key=lambda x: x["date"])
     return sorted_results

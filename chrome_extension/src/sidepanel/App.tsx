@@ -8,6 +8,7 @@ import {
 import { JobCard } from "./components/jobcard";
 import SkillCharts from "./components/charts";
 import { HiMiniInformationCircle } from "react-icons/hi2";
+import { load } from "cheerio";
 
 const App = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -15,28 +16,35 @@ const App = () => {
   const [activeValue, setActiveValue] = useState<string | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [trend, setTrends] = useState<SkillTrend[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const updateUI = async (val: string) => {
       setKeyword(val);
+      setLoading(true);
+      try {
+        const skillsData = await fetchSkills(val);
+        setSkills(skillsData);
 
-      const skillsData = await fetchSkills(val);
-      setSkills(skillsData);
+        if (skillsData && skillsData.length > 0) {
+          const firstSkill = skillsData[0].skill_title;
+          setActiveValue(firstSkill);
 
-      if (skillsData && skillsData.length > 0) {
-        const firstSkill = skillsData[0].skill_title;
-        setActiveValue(firstSkill);
+          const [jobsData, trendData] = await Promise.all([
+            fetchJobsMatch(firstSkill.toLowerCase(), val),
+            fetchSkillsTrend(firstSkill.toLowerCase(), val),
+          ]);
 
-        const [jobsData, trendData] = await Promise.all([
-          fetchJobsMatch(firstSkill.toLowerCase(), val),
-          fetchSkillsTrend(firstSkill.toLowerCase(), val),
-        ]);
-
-        setJobs(jobsData);
-        setTrends(trendData);
-      } else {
-        setJobs([]);
-        setTrends([]);
+          setJobs(jobsData);
+          setTrends(trendData);
+        } else {
+          setJobs([]);
+          setTrends([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -63,65 +71,79 @@ const App = () => {
   };
 
   return (
-    <div className="p-4 text-sm bg-white w-full max-w-md mx-auto">
+    <div className="p-4 text-sm bg-white w-full max-w-md mx-auto min-h-[400px]">
       <h2 className="text-lg font-bold text-center text-blue-600 mb-4">
-        {keyword?.toUpperCase() || "NO KEYWORD"}
+        {keyword?.toUpperCase() || "ANALYZING JOB"}
       </h2>
 
-      <section>
-        <p className="font-extrabold mb-2">Required Skills</p>
-        <div className="h-32 overflow-y-auto space-y-2 ">
-          {skills.length > 0 ? (
-            skills.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => handleSkillClick(s.skill_title)}
-                className={`flex items-center justify-between rounded border px-3 w-full py-2 transition-all cursor-pointer ${
-                  activeValue === s.skill_title
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200"
-                }`}
-              >
-                <span className="font-medium">{s.skill_title}</span>
-                <span className="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
-                  {s.count} jobs
-                </span>
-              </button>
-            ))
-          ) : (
-            <div className="flex flex-col items-center justify-center p-6 text-centerrounded-xl">
-              <HiMiniInformationCircle className="w-6 h-6 text-blue-500" />
-              <p className="text-gray-700 font-medium leading-relaxed">
-                No skills detected yet.
-              </p>
-              <p className="text-gray-500 text-xs mt-2 text-center">
-                Try clicking a few job listings on the left, then restart this
-                panel to see the skill analysis.
-              </p>
-            </div>
-          )}
+      {loading ? (
+        /* --- GLOBAL LOADING STATE --- */
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-gray-600 font-medium">
+            Fetching skill insights...
+          </p>
+          <p className="text-gray-400 text-xs">
+            This usually takes 2-3 seconds
+          </p>
         </div>
-      </section>
-      {jobs.length > 0 && (
-        <section className="mt-6">
-          <p className="font-extrabold mb-2 text-gray-800">Matching Jobs</p>
-          <div className="h-47 overflow-y-auto space-y-2 pr-1">
-            {jobs.map((j) => (
-              <JobCard key={j.job_id} job={j} />
-            ))}
-          </div>
-        </section>
-      )}
-      {trend.length > 0 && (
-        <section className="mt-6">
-          <p className="font-extrabold mb-2">Skills Trend</p>
-          <div className="bg-white rounded-lg h-64 p-2">
-            <SkillCharts skillTrend={trend} />
-          </div>
-        </section>
+      ) : (
+        /* --- MAIN CONTENT (Only shows when isLoading is false) --- */
+        <>
+          <section>
+            <p className="font-extrabold mb-2 text-gray-800">Required Skills</p>
+            <div className="h-32 overflow-y-auto space-y-2">
+              {skills.length > 0 ? (
+                skills.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSkillClick(s.skill_title)}
+                    className={`flex items-center justify-between rounded border px-3 w-full py-2 transition-all ${
+                      activeValue === s.skill_title
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    <span className="font-medium">{s.skill_title}</span>
+                    <span className="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
+                      {s.count} jobs
+                    </span>
+                  </button>
+                ))
+              ) : (
+                /* Empty State within the Skills section */
+                <div className="text-center p-4 border border-dashed rounded-lg">
+                  <HiMiniInformationCircle className="w-5 h-5 text-blue-400 mx-auto mb-1" />
+                  <p className="text-gray-500 text-xs">
+                    No skills detected for this job.
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {jobs.length > 0 && (
+            <section className="mt-6">
+              <p className="font-extrabold mb-2 text-gray-800">Matching Jobs</p>
+              <div className="h-48 overflow-y-auto space-y-2 pr-1">
+                {jobs.map((j) => (
+                  <JobCard key={j.job_id} job={j} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {trend.length > 0 && (
+            <section className="mt-6">
+              <p className="font-extrabold mb-2 text-gray-800">Demand Trend</p>
+              <div className="bg-white rounded-lg h-64 p-2">
+                <SkillCharts skillTrend={trend} />
+              </div>
+            </section>
+          )}
+        </>
       )}
     </div>
   );
 };
-
 export default App;
