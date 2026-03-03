@@ -1,5 +1,5 @@
 from src.models.db import Base
-from sqlalchemy import Column, String, Integer, UniqueConstraint, ForeignKeyConstraint
+from sqlalchemy import Column, String, Integer, UniqueConstraint
 
 
 class Skills (Base):

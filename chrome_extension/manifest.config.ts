@@ -18,7 +18,12 @@ export default defineManifest({
   },
   content_scripts: [{
     js: ['src/content/main.tsx'],
-    matches: ['https://www.linkedin.com/jobs/*'],
+    "matches": [
+      "https://www.linkedin.com/jobs/*",
+      "https://www.linkedin.com/jobs/search*",
+      "https://www.linkedin.com/jobs/search-results*",
+      "https://*.linkedin.com/jobs/*"
+    ]
   }],
   side_panel: {
     default_path: 'src/sidepanel/index.html',

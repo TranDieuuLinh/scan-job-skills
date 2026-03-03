@@ -1,5 +1,5 @@
 from src.models.db import Base
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, UniqueConstraint
 
 
 class Job(Base):
@@ -13,3 +13,8 @@ class Job(Base):
     job_company = Column(String, nullable=False)
     job_published_date = Column(DateTime(timezone=True), nullable=False)
     job_url = Column(String, nullable=False)
+
+
+    __table_args__ = (
+        UniqueConstraint('job_id', 'keyword', name='_job_keyword_uc'),
+    )

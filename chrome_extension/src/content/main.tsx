@@ -1,6 +1,7 @@
 const duplicateIdUrl = new Set<string>();
 
 async function scanJobs(): Promise<void> {
+  console.log("scanning..");
   for (let i = 0; i < 10; i++) {
     const jobTitleLink = document.querySelector<HTMLAnchorElement>(
       'a[href*="/jobs/view/"]'
@@ -30,6 +31,17 @@ async function scanJobs(): Promise<void> {
     const jobUrl = jobTitleLink?.href;
     const jobId = jobUrl?.match(/\/view\/(\d+)/)?.[1];
     const cleanDesc = jobDescr?.textContent?.replace(/\s+/g, " ").trim();
+    console.log(
+      "hi",
+      jobId,
+      companyName,
+      jobName,
+      jobUrl,
+      cleanDesc,
+      location,
+      keyword,
+      dateText
+    );
 
     if (companyName && jobName && jobId && cleanDesc && location) {
       const key = `${keyword}__${jobId}`;
@@ -48,6 +60,17 @@ async function scanJobs(): Promise<void> {
             date: dateText,
           }),
         ]);
+        console.log(
+          "test",
+          jobId,
+          companyName,
+          jobName,
+          jobUrl,
+          cleanDesc,
+          location,
+          keyword,
+          dateText
+        );
         return;
       }
     }
@@ -86,6 +109,15 @@ if (container) {
       triggerScan();
   });
 }
+
+document.addEventListener("click", (e) => {
+  const card = (e.target as HTMLElement).closest(
+    'div[data-view-name="job-search-job-card"]'
+  );
+  if (card) {
+    triggerScan();
+  }
+});
 
 document.addEventListener("keydown", (e) => {
   if (

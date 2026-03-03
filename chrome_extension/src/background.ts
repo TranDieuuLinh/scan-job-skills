@@ -2,6 +2,7 @@ import * as chrono from "chrono-node";
 
 const URL = import.meta.env.VITE_BACKEND;
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  console.log("Background received:", msg.type);
   (async () => {
     try {
       switch (msg.type) {
